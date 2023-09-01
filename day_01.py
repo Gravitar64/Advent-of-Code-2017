@@ -6,14 +6,13 @@ def load(file):
     return f.read()
 
 
-def solve(p, n):
-  return sum(int(p[i]) for i in range(l) if p[i] == p[(i+n) % l])
+def solve(p,l):
+  part1 =  sum(int(p[i]) for i in range(l) if p[i] == p[(i+1) % l])
+  part2 =  sum(int(p[i]) for i in range(l) if p[i] == p[(i+l//2) % l])
+  return part1, part2
 
 
 start = pfc()
 puzzle = load('day_01.txt')
-l, n = len(puzzle), len(puzzle)//2
-
-print(f'Part1: {solve(puzzle,1)}')
-print(f'Part2: {solve(puzzle,n)}')
+print(f'Part 1 & 2: {solve(puzzle,len(puzzle))}')
 print(f'Ermittelt in {pfc()-start:.5f} Sek.')
