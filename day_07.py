@@ -8,31 +8,31 @@ def load(file):
     return f.readlines()
 
 
-def dfs(node, weights, childs):
-  global part2
-  sub = [dfs(c, weights, childs) for c in childs[node]]
-  if not part2 and len(set(sub)) > 1:
-    (target, _), (failure, _) = collections.Counter(sub).most_common()
-    part2 = target - failure + weights[childs[node][sub.index(failure)]]
-  return weights[node] + sum(sub)
+def dfs(node, weights, parents):
+  sub = []
+  for child in parents[node]:
+    terminate, weight = dfs(child, weights, parents)
+    if terminate: return True, weight
+    sub.append(weight)
+  if len(set(sub)) > 1:
+    target,failure = list(collections.Counter(sub))
+    return True, target - failure + weights[parents[node][sub.index(failure)]]
+  return False, weights[node] + sum(sub)
 
 
 def solve(p):
-  weights, childs = dict(), dict()
+  weights, parents = dict(), dict()
   for z in p:
     node, n, *children = re.findall('\w+', z)
-    weights[node] = int(n)
-    childs[node] = tuple(children)
-  part1, = set(childs) - {child for children in childs.values()
-                          for child in children}
-  dfs(part1, weights, childs)
-  return part1
+    weights[node], parents[node] = int(n), children
+  part1, = set(parents) - {c for children in parents.values() for c in children}
+  part2 = dfs(part1, weights, parents)
+  return part1, part2
 
 
 start = pfc()
 p = load('day_07.txt')
-part2 = None
-part1 = solve(p)
+part1, part2 = solve(p)
 print(f'Part 1: {part1}')
-print(f'Part 2: {part2}')
+print(f'Part 2: {part2[1]}')
 print(f'Ermittelt in {pfc()-start:.5f} Sek.')
