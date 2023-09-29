@@ -1,6 +1,6 @@
 from time import perf_counter as pfc
 import re
-import networkx as nx
+from collections import defaultdict
 
 
 def load(file):
@@ -9,10 +9,21 @@ def load(file):
 
 
 def solve(p):
-  g = nx.Graph()
-  for node, *neighbors in p:
-    g.add_edges_from((node, neighbor) for neighbor in neighbors)
-  return len(nx.node_connected_component(g, 0)), nx.number_connected_components(g)
+  pipes = dict()
+  for pipe in p:
+    pipes[pipe[0]] = set(pipe[1:])
+  all_numbers = set(n for z in p for n in z)
+  groups = defaultdict(set)
+  for n in range(max(all_numbers) + 1):
+    queue = [n]
+    while queue:
+      prog = queue.pop()
+      for prog2 in pipes[prog]:
+        if prog2 not in all_numbers: continue
+        groups[n].add(prog2)
+        queue.append(prog2)
+        all_numbers.remove(prog2)
+  return len(groups[0]), len(groups)
 
 
 start = pfc()
