@@ -5,6 +5,7 @@ def solve(a, b):
   part1 = part2 = 0
   bit_mask, mod = 65536, 2147483647
   aas, bbs = [], []
+  
   for _ in range(40_000_000):
     a, b = (a * 16807) % mod, (b * 48271) % mod
     part1 += (ma := a % bit_mask) == (mb := b % bit_mask)
