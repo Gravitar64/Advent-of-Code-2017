@@ -8,15 +8,15 @@ def load(file):
 
 def solve(p):
   grid = {x+1j*y: c for y, row in enumerate(p) for x, c in enumerate(row) if c != ' '}
-  pos, steer, path = [pos for pos in grid if pos.imag == 0][0], 0+1j, []
+  pos, steer, path = next(pos for pos in grid if pos.imag == 0), 0+1j, []
   
   while pos in grid:
     if grid[pos] == '+': 
-      steer = [s for s in [steer *1j, steer *-1j] if pos+s in grid][0]
-    path.append(pos)
+      steer = next(s for s in [steer *1j, steer *-1j] if pos+s in grid)
+    path.append(grid[pos])
     pos += steer  
   
-  return ''.join(grid[pos] for pos in path if grid[pos].isalpha()), len(path)
+  return ''.join(c for c in path if c.isalpha()), len(path)
 
 
 start = time.perf_counter()
