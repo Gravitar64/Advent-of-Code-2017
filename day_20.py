@@ -1,5 +1,6 @@
 import time
 import re
+from collections import defaultdict
 
 
 def load(file):
@@ -11,37 +12,41 @@ def add_vector(v1, v2):
   return [a + b for a, b in zip(v1, v2)]
 
 
+def new_pos(values):
+    p, v, a = values[:3], values[3:6], values[6:]
+    v = add_vector(v, a)
+    p = add_vector(p, v)
+    return p+v+a
+
+
 def manhatten_dist(v1):
   return sum(abs(v) for v in v1)
 
 
 def solve(puzzle):
   puzzle2 = puzzle.copy()
-  for _ in range(600):
-    for i, values in enumerate(puzzle):
-      p, v, a = values[:3], values[3:6], values[6:]
-      v = add_vector(v, a)
-      p = add_vector(p, v)
-      puzzle[i] = p + v + a
+  for _ in range(500):
+    for i, particle in enumerate(puzzle):
+      puzzle[i] = new_pos(particle)
 
-  _, values = sorted((manhatten_dist(values), values) for values in puzzle)[0]
-  part1 = puzzle.index(values)
+  _, particle = sorted((manhatten_dist(values), values) for values in puzzle)[0]
+  part1 = puzzle.index(particle)
 
-  for _ in range(600):
-    to_del, positions = set(), set()
-    for i, values in enumerate(puzzle2):
-      p, v, a = values[:3], values[3:6], values[6:]
-      v = add_vector(v, a)
-      p = add_vector(p, v)
-      puzzle2[i] = p + v + a
-      if tuple(p) in positions:
-        to_del.add(tuple(p))
-      else:
-        positions.add(tuple(p))
-    puzzle2 = [values for values in puzzle2 if not tuple(
-      values[0:3]) in to_del]
+  for _ in range(100):
+    positions = defaultdict(list)
+    for i, particle in enumerate(puzzle2):
+      particle = new_pos(particle)
+      puzzle2[i] = particle
+      positions[tuple(particle[:3])].append(particle)
+    
+    for dupicles in positions.values():
+      if len(dupicles) == 1: continue
+      for dupicle in dupicles:
+        puzzle2.remove(dupicle)      
 
   return part1, len(puzzle2)
+
+
 
 
 start = time.perf_counter()
