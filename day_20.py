@@ -13,10 +13,10 @@ def add_vector(v1, v2):
 
 
 def new_pos(values):
-    p, v, a = values[:3], values[3:6], values[6:]
-    v = add_vector(v, a)
-    p = add_vector(p, v)
-    return p+v+a
+  p, v, a = values[:3], values[3:6], values[6:]
+  v = add_vector(v, a)
+  p = add_vector(p, v)
+  return p + v + a
 
 
 def manhatten_dist(v1):
@@ -29,24 +29,21 @@ def solve(puzzle):
     for i, particle in enumerate(puzzle):
       puzzle[i] = new_pos(particle)
 
-  _, particle = sorted((manhatten_dist(values), values) for values in puzzle)[0]
+  _, particle = sorted((manhatten_dist(particle[:3]), particle) for particle in puzzle)[0]
   part1 = puzzle.index(particle)
 
   for _ in range(100):
     positions = defaultdict(list)
     for i, particle in enumerate(puzzle2):
-      particle = new_pos(particle)
-      puzzle2[i] = particle
+      puzzle2[i] = (particle := new_pos(particle))
       positions[tuple(particle[:3])].append(particle)
-    
+
     for dupicles in positions.values():
       if len(dupicles) == 1: continue
       for dupicle in dupicles:
-        puzzle2.remove(dupicle)      
+        puzzle2.remove(dupicle)
 
   return part1, len(puzzle2)
-
-
 
 
 start = time.perf_counter()
