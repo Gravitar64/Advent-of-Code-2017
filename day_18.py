@@ -17,25 +17,25 @@ class Computer():
     def v(val): return self.registers[val] if val.isalpha() else int(val)
 
     opc, *values = self.prg[self.pc].split()
-    reg, a = values[0], v(values[0])
-    if len(values) == 2: b = v(values[1])
+    reg, val1 = values[0], v(values[0])
+    if len(values) == 2: val2 = v(values[1])
     
     match opc:
-      case 'set': self.registers[reg] = b
-      case 'add': self.registers[reg] += b
-      case 'mul': self.registers[reg] *= b
-      case 'mod': self.registers[reg] %= b
+      case 'set': self.registers[reg] = val2
+      case 'add': self.registers[reg] += val2
+      case 'mul': self.registers[reg] *= val2
+      case 'mod': self.registers[reg] %= val2
       case 'jgz':
-        if a > 0:
-          self.pc += b
+        if val1 > 0:
+          self.pc += val2
           return
       case 'snd':
-        self.recovered = a
+        self.recovered = val1
         if not part1:
-          self.otherComp.queue.append(a)
+          self.otherComp.queue.append(val1)
           self.sendCounter += 1
       case 'rcv':
-        if part1 and a: return True
+        if part1 and val1: return True
         if self.queue:
           self.registers[reg] = self.queue.pop(0)
           self.waiting = False
