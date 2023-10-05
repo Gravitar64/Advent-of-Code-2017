@@ -41,7 +41,7 @@ def solve(puzzle):
     for dupicles in positions.values():
       if len(dupicles) == 1: continue
       for dupicle in dupicles:
-        puzzle2.remove(dupicle)
+        puzzle2.remove(dupicle)f
 
   return part1, len(puzzle2)
 
