@@ -20,14 +20,13 @@ def solve(p):
       turingMachines[states[0]] = {0: (numbers[1], rl[0], states[1]), 
                                    1: (numbers[3], rl[1], states[2])}
 
-  cursor = 0
-  tape = set()
+  cursor, tape = 0, set()
   for _ in range(steps):
     write, direction, machine = turingMachines[machine][0 if cursor not in tape else 1]
     if write:
       tape.add(cursor)
-    else:
-      if cursor in tape: tape.remove(cursor)
+    elif cursor in tape: 
+      tape.remove(cursor)
     cursor += 1 if direction == 'right' else -1
   return len(tape)
 
